@@ -1,0 +1,646 @@
+/* Anki-City Styling - 2D Side-Scrolling Street Theme */
+:root {
+    --bg-dark: rgba(20, 20, 20, 0.75);
+    --bg-light: rgba(245, 245, 245, 0.85);
+    --border-dark: rgba(255, 255, 255, 0.12);
+    --border-light: rgba(0, 0, 0, 0.08);
+    --text-dark: #f0f0f0;
+    --text-light: #2c3e50;
+    --accent-glow: 0 0 12px rgba(66, 153, 225, 0.6);
+}
+
+/* Base resets & scrollbars */
+body {
+    margin: 0;
+    padding: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #ffffff;
+    color: #2c3e50;
+    user-select: none;
+    overflow: hidden;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Anki Dark Mode adaptation - force light dashboard theme on white card layout */
+body.nightMode {
+    color: #2c3e50;
+}
+body:not(.nightMode) {
+    color: #2c3e50;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    background: #ffffff;
+    border-radius: 8px;
+    color: #2c3e50;
+}
+
+/* HUD styling on white card background */
+.hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    font-size: 13px;
+    color: #2c3e50;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.hud-resources {
+    display: flex;
+    gap: 12px;
+    font-weight: bold;
+    align-items: center;
+}
+
+.resource-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.hud-center {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.progress-container {
+    width: 100px;
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+body:not(.nightMode) .progress-container {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4299e1, #667eea);
+    width: 0%;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 6px rgba(102, 126, 234, 0.6);
+}
+
+.hud-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.hud-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: inherit;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+.hud-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+.hud-btn:active {
+    transform: translateY(1px);
+}
+body:not(.nightMode) .hud-btn {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+body:not(.nightMode) .hud-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* 2D Side-Scrolling City Viewport */
+.city-viewport {
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-image: url('images/background.png');
+    background-size: cover;
+    background-position: bottom center;
+    background-color: #87CEEB; /* fallback sky blue */
+    position: relative;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: row;
+    align-items: stretch; /* Prevents height collapse of building sprite slots */
+    flex-wrap: nowrap;
+    padding: 0 80px; /* flanking white space */
+}
+
+/* Hide scrollbar visually but keep functionality */
+.city-viewport::-webkit-scrollbar {
+    height: 8px;
+}
+.city-viewport::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+.city-viewport::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+.city-viewport::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.street-slot {
+    width: 90px; /* Tight, compact, crowded building row */
+    height: 100%;
+    align-self: stretch; /* Stretch to full height of viewport */
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    transition: filter 0.2s ease;
+}
+
+.street-slot:hover {
+    filter: brightness(1.15) drop-shadow(0 0 12px rgba(255,255,255,0.6));
+}
+
+.building-sprite {
+    width: 100%;
+    max-height: 80%; /* fallback prevents buildings from clipping */
+    object-fit: contain;
+    object-position: bottom center;
+    image-rendering: auto; /* Since they are high res, let browser smooth or not */
+    pointer-events: none;
+    animation: placeBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Height scaling for standard buildings based on tier level */
+.building-sprite.level-1 { max-height: 50%; }
+.building-sprite.level-2 { max-height: 60%; }
+.building-sprite.level-3 { max-height: 70%; }
+.building-sprite.level-4 { max-height: 80%; }
+
+/* Custom smaller height scaling for Houses (keeps houses smaller than other buildings) */
+.building-sprite.type-HOUSE.level-1 { max-height: 36%; }
+.building-sprite.type-HOUSE.level-2 { max-height: 44%; }
+.building-sprite.type-HOUSE.level-3 { max-height: 52%; }
+.building-sprite.type-HOUSE.level-4 { max-height: 62%; }
+
+@keyframes placeBounce {
+    0% { transform: translateY(-30px) scale(0.9); opacity: 0; }
+    60% { transform: translateY(2px) scale(1.05); }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Modals Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal {
+    width: 320px;
+    border-radius: 12px;
+    border: 1px solid;
+    padding: 16px;
+    font-size: 13px;
+    transform: scale(0.9);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.modal-overlay.active .modal {
+    transform: scale(1);
+}
+
+body.nightMode .modal {
+    background: rgba(25, 25, 25, 0.95);
+    border-color: var(--border-dark);
+    color: var(--text-dark);
+}
+body:not(.nightMode) .modal {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: var(--border-light);
+    color: var(--text-light);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.modal-close {
+    cursor: pointer;
+    opacity: 0.6;
+    font-size: 16px;
+}
+.modal-close:hover {
+    opacity: 1;
+}
+
+/* Building Detail Modal Actions */
+.detail-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.action-row {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+    color: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+.action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.02);
+}
+body:not(.nightMode) .action-btn {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+body:not(.nightMode) .action-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+}
+body:not(.nightMode) .action-btn:disabled {
+    opacity: 0.5;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+/* Trading Interface inside Tavern */
+.trade-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.trade-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+}
+body:not(.nightMode) .trade-row {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.06);
+}
+
+.trade-btn {
+    padding: 4px 10px;
+    background: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 11px;
+}
+.trade-btn:hover {
+    background: #3182ce;
+}
+.trade-btn:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Toast Message */
+.toast {
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(30, 30, 30, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    z-index: 2000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+}
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* Resize drag handle at the top of the dashboard */
+.resize-handle {
+    height: 8px;
+    background: rgba(0, 0, 0, 0.04);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    cursor: ns-resize;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+.resize-handle::after {
+    content: "";
+    width: 24px;
+    height: 2px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 1px;
+}
+body.nightMode .resize-handle {
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+body.nightMode .resize-handle::after {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Floating popover in the sky above the building */
+.building-popover {
+    position: absolute;
+    top: 15px; /* Float in the upper sky region of the background */
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    width: 220px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    text-align: center;
+}
+.building-popover.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+body.nightMode .building-popover {
+    background: rgba(30, 30, 30, 0.88);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #f0f0f0;
+}
+.popover-title {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+.popover-subtitle {
+    font-size: 10px;
+    opacity: 0.7;
+    margin-bottom: 4px;
+}
+.popover-cost-container {
+    font-size: 11px;
+    margin: 4px 0 8px 0;
+    font-weight: bold;
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.popover-cost-badge {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    padding: 2px 6px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+body.nightMode .popover-cost-badge {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+.popover-cost-badge.insufficient {
+    background: rgba(254, 215, 215, 0.6);
+    border-color: rgba(245, 101, 101, 0.3);
+    color: #c53030;
+}
+body.nightMode .popover-cost-badge.insufficient {
+    background: rgba(155, 44, 44, 0.4);
+    border-color: rgba(229, 62, 62, 0.4);
+    color: #feb2b2;
+}
+.popover-btn {
+    width: 100%;
+    padding: 6px 12px;
+    background: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.popover-btn:hover:not(:disabled) {
+    background: #3182ce;
+    transform: translateY(-1px);
+}
+.popover-btn:active:not(:disabled) {
+    transform: translateY(1px);
+}
+.popover-btn:disabled {
+    background: #cbd5e0;
+    color: #718096;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+body.nightMode .popover-btn:disabled {
+    background: #4a5568;
+    color: #a0aec0;
+}
+
+/* Capsule badge at the bottom of the slot showing building name and level */
+.building-badge {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.65);
+    color: #ffffff;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 9px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0.75;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.street-slot:hover .building-badge {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.85);
+    transform: translateX(-50%) translateY(-2px);
+}
+body.nightMode .building-badge {
+    background: rgba(20, 20, 20, 0.8);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Spacer at bottom of street-slot to align building base with riverbank path */
+.street-slot-spacer {
+    height: 15.7%; /* 141px / 896px = 15.73% of height */
+    width: 100%;
+    flex-shrink: 0;
+    pointer-events: none;
+}
+
+/* Population container and milestone forecast styling */
+.population-container {
+    margin-left: 8px;
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    padding-left: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+body:not(.nightMode) .population-container {
+    border-left-color: rgba(0, 0, 0, 0.1);
+}
+
+.milestone-forecast {
+    font-size: 9px;
+    opacity: 0.75;
+    font-weight: normal;
+    white-space: nowrap;
+}
+
+body:not(.nightMode) .milestone-forecast {
+    color: #4a5568;
+}
+
+body.nightMode .milestone-forecast {
+    color: #cbd5e0;
+}
+
+/* Milestone Infographic Reward Cards */
+.reward-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 8px;
+    min-width: 60px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.reward-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+body.nightMode .reward-card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f0f0f0;
+}
+
+body:not(.nightMode) .reward-card {
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: #2c3e50;
+}
+
+/* Minimized bar styling */
+.minimized-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 12px;
+    height: 100%;
+    box-sizing: border-box;
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    color: #2c3e50;
+}
+body.nightMode .minimized-bar {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #f0f0f0;
+}
+.minimized-text {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}

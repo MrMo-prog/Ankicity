@@ -1,0 +1,34 @@
+{
+  "resources": {
+    "straw": 10,
+    "wood": 5,
+    "stone": 5,
+    "gold": 1
+  },
+  "current_counter": 20,
+  "cards_per_resource": 20,
+  "next_resource": "straw",
+  "street_lineup": [
+    {"id": "HOUSE", "tier": 1},
+    {"id": "HOUSE", "tier": 1},
+    {"id": "SAWMILL", "tier": 1},
+    {"id": "HOUSE", "tier": 1},
+    {"id": "TAVERN", "tier": 1},
+    {"id": "HOUSE", "tier": 1},
+    {"id": "HOUSE", "tier": 1},
+    {"id": "TOWNHALL", "tier": 1},
+    {"id": "HOUSE", "tier": 1},
+    {"id": "HOUSE", "tier": 1},
+    {"id": "STRAW_MILL", "tier": 1},
+    {"id": "QUARRY", "tier": 1},
+    {"id": "HOUSE", "tier": 1},
+    {"id": "HOUSE", "tier": 1},
+    {"id": "GOLD_MINE", "tier": 1}
+  ],
+  "unlocked_cosmetics": [
+    "default"
+  ],
+  "installation_time": 0,
+  "last_milestone_claimed": 0,
+  "pending_milestones": []
+}

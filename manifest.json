@@ -1,0 +1,7 @@
+{
+  "name": "Anki-City",
+  "package": "ankicity",
+  "minimum_version": 210000,
+  "humanModifiers": ["Antigravity"],
+  "homepage": "https://github.com/moritzmuss/Ankicity"
+}
