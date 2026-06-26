@@ -14,6 +14,7 @@ def main():
         "engine.py",
         "exporter.py",
         "manifest.json",
+        "patch_notes.md",
         "webview.py"
     ]
     

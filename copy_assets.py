@@ -1,7 +1,7 @@
 import os
 import shutil
 
-src_dir = '/Users/moritzmuss/Programmieren/Ankicity/images'
+src_dir = '/Users/moritzmuss/Programmieren/Ankicity/new_images'
 dest_dir = '/Users/moritzmuss/Programmieren/Ankicity/web/images'
 
 mapping = {
