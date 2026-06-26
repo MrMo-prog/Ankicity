@@ -134,8 +134,8 @@ def check_daily_streak_reward(config: dict) -> dict:
         cutoff = mw.col.sched.day_cutoff
         last_claim = config.get("last_streak_claim_cutoff", 0)
         
-        # If it's a new scheduler day
-        if last_claim < cutoff:
+        # If it's a new scheduler day (using a 12-hour tolerance to prevent timezone/clock changes from causing double claims)
+        if last_claim == 0 or cutoff - last_claim > 43200:
             # Reset daily claimed milestones
             config["claimed_streak_milestones_today"] = []
             
@@ -180,7 +180,8 @@ def check_daily_artisan_draw(config: dict) -> dict:
         cutoff = mw.col.sched.day_cutoff
         last_draw = config.get("last_artisan_draw_cutoff", 0)
         
-        if last_draw < cutoff:
+        # Using a 12-hour tolerance to prevent timezone/clock changes from causing premature resets
+        if last_draw == 0 or cutoff - last_draw > 43200:
             # Clear active artisan session
             config["active_artisan"] = None
             config["artisan_reviews_remaining"] = 0

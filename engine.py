@@ -436,6 +436,7 @@ def get_population(street_lineup: list) -> int:
                 pop += 100
             elif tier == 4:
                 pop += 250
+        pop += cell.get("extra_pop", 0)
     return pop
 
 
